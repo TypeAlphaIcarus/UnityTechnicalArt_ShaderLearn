@@ -228,7 +228,122 @@ Color，Int，Float，Vector，2D，3D，Cube
 
 ### Color
 
+```C
+Properties
+{
+    [HDR]_Color("Color", Color) = (1, 1, 1, 1)
+}
+SubShader
+{    
+    Pass
+    {
+        CGPROGRAM
+        ...
+        fixed4 _Color;
+        ...
+        fixed4 frag (v2f i) : SV_Target
+        {
+            fixed4 col = _Color;
+            return col;
+        }
+        ENDCG
+    }
+}
+```
 
+
+
+### Int & Float
+
+```C
+Properties
+{
+    [HDR]_Color("Color", Color) = (1, 1, 1, 1)
+    _Int("Int Value", int) = 0
+    _Float("Float Value", float) = 0.5
+    _Slider("Slider", Range(0, 1)) = 0.5
+    [PowerSlider(2)]_PowerSlider("PowerSlider", Range(0, 10)) = 5	//修改滑杆的映射比例
+    [IntRange]_SliderInt("SliderInt", Range(0, 10)) = 5
+    [Toggle]_Toggle("Toggle", int) = 0
+}
+SubShader
+{
+    Pass
+    {
+        CGPROGRAM
+        ...
+        //如果输入小数会向下取整，如果指定为fixed、float，会获取小数
+        //具体取值根据下方声明决定，和Properties中声明无关
+        int _Int;	
+        float _Float;        
+        ...
+        ENDCG
+    }
+}
+```
+
+
+
+### Vector
+
+```C
+Properties
+{
+    ...
+    _Vector("Vector", Vector) = (1, 1, 1, 1)
+}
+```
+
+
+
+### 通用特征
+
+```C
+Properties
+{
+    [HideInInspector]
+    [Header(Title)]	//不能是中文，不要加双引号
+    [Space(10)]
+}
+```
+
+
+
+### 2D纹理
+
+```C
+Properties
+{
+    _2DTex("2DTex", 2D) = "white"{}		//会自带Tilling和Offset
+    [NoScaleOffset]_2DTex("2DTex", 2D) = "white"{}		//会隐藏Tilling和Offset
+}
+```
+
+
+
+## 自发光材质案例
+
+需求分析：
+
+自发光，不受灯光影响
+
+受击闪白
+
+中毒变绿，火烧变红
+
+死亡溶解消失
+
+
+
+### 添加纹理
+
+模型点通过**投影函数**，映射到UV上(0~1)
+
+通过**映射函数**，将UV映射到纹理贴图上获取纹素颜色(根据贴图分辨率，坐标需要取整)
+
+最后将纹素颜色，通过**值变换函数**将颜色映射到模型行
+
+Shader实际能控制的是**映射函数**
 
 
 
